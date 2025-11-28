@@ -146,7 +146,8 @@
     <script type="module">
         const response = await fetch('./book.json'); //due to fetch this has to be opened in local server otherwise json data cannot be fetched.
         const initialBooks = await response.json();
-        /*         const initialBooks = [{"title":"The Woods", "author": "Pia Franziska Kraus", "year": 2025, "genre": "Non-Fiction"},
+
+        /*const initialBooks = [{"title":"The Woods", "author": "Pia Franziska Kraus", "year": 2025, "genre": "Non-Fiction"},
                                         {"title":"Simply More", "author": "Cynthia Erivo", "year": 2025, "genre": "Autobiography"},                                 //use in file Json if local server use not possible.
                                         {"title": "The Ultimate Hidden Truth of the World", "author": "David Graeber","year": 2025, "genre": "Non-Fiction"  }]; */
 
@@ -304,7 +305,7 @@
             const release = document.getElementById('releaseAdd').value.trim();  //retrieves data filled out in form
             const genre = document.getElementById('genreAdd').value.trim();
             document.getElementById('addBookForm').reset(); //clears form
-            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty it cancels add
+            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "" )) { //if one of the fields is empty it cancels add
                 document.getElementById('feedback').textContent = "A Space has been left empty";
                 setTimeout(() => {
                     document.getElementById('feedback').textContent = "";
@@ -345,7 +346,7 @@
                 }
 
             }
-            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty it cancels edit
+            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "") || (oldTitle.trim() === "")) { //if one of the fields is empty it cancels edit
                 document.getElementById('feedback').textContent = "Space has been left empty";
                 setTimeout(() => {
                     document.getElementById('feedback').textContent = "";
