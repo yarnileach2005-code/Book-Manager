@@ -234,36 +234,36 @@
         //generates user feedback for remove function
         function userFeedbackRemove(boolean) {
             if (!boolean) {
-                document.getElementById('feedback').innerHTML = "This Book does not exist";
+                document.getElementById('feedback').textContent = "This Book does not exist";
             }
-            else document.getElementById('feedback').innerHTML = "Book was successfully removed";
+            else document.getElementById('feedback').textContent = "Book was successfully removed";
 
             setTimeout(() => { //makes it so that message will vanish after 3 seconds
-                document.getElementById('feedback').innerHTML = "";
+                document.getElementById('feedback').textContent = "";
 
             }, 3000);
         }
         //generates user feedback for add function
         function userFeedbackAdd(boolean) {
             if (boolean) {
-                document.getElementById('feedback').innerHTML = "Book has been added.";
+                document.getElementById('feedback').textContent = "Book has been added.";
             }
-            else document.getElementById('feedback').innerHTML = "This book already exists.";
+            else document.getElementById('feedback').textContent = "This book already exists.";
 
             setTimeout(() => {
-                document.getElementById('feedback').innerHTML = "";
+                document.getElementById('feedback').textContent = "";
 
             }, 3000);
         }
         //generates user feedback for edit function
         function userFeedbackEdit(boolean) {
             if (boolean) {
-                document.getElementById('feedback').innerHTML = "Book has been succesfully edited";
+                document.getElementById('feedback').textContent = "Book has been succesfully edited";
             }
-            else document.getElementById('feedback').innerHTML = "No book under this name found";
+            else document.getElementById('feedback').textContent = "No book under this name found";
 
             setTimeout(() => {
-                document.getElementById('feedback').innerHTML = "";
+                document.getElementById('feedback').textContent = "";
 
             }, 3000);
         }
@@ -281,10 +281,10 @@
                 userFeedbackRemove(removeBook(titleToRemove)); //remove book object
             }
             else {
-                document.getElementById('feedback').innerHTML = "No title present!"; //if the remove book input is empty this feedback will be displayed
+                document.getElementById('feedback').textContent = "No title present!"; //if the remove book input is empty this feedback will be displayed
 
                 setTimeout(() => {
-                    document.getElementById('feedback').innerHTML = "";
+                    document.getElementById('feedback').textContent = "";
 
                 }, 3000);
             }
@@ -299,15 +299,15 @@
         //Event listener for add button
         document.getElementById('addBookForm').addEventListener('submit', function (event) { //listens for a successful submits which means empty fields can not be submitted
             event.preventDefault(); //stops the page from unneeded reload
-            const title = document.getElementById('titleAdd').value;
-            const author = document.getElementById('authorAdd').value;
-            const release = document.getElementById('releaseAdd').value;  //retrieves data filled out in form
-            const genre = document.getElementById('genreAdd').value;
+            const title = document.getElementById('titleAdd').value.trim();
+            const author = document.getElementById('authorAdd').value.trim();
+            const release = document.getElementById('releaseAdd').value.trim();  //retrieves data filled out in form
+            const genre = document.getElementById('genreAdd').value.trim();
             document.getElementById('addBookForm').reset(); //clears form
             if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty it cancels add
-                document.getElementById('feedback').innerHTML = "A Space has been left empty";
+                document.getElementById('feedback').textContent = "A Space has been left empty";
                 setTimeout(() => {
-                    document.getElementById('feedback').innerHTML = "";
+                    document.getElementById('feedback').textContent = "";
                 }, 3000);
 
                 return false;
@@ -327,17 +327,17 @@
                 return; //
             }
 
-            const oldTitle = document.getElementById('titleOld').value;
-            const title = document.getElementById('titleEdit').value;
-            const author = document.getElementById('authorEdit').value; //extract the form values
-            const release = document.getElementById('releaseEdit').value;
-            const genre = document.getElementById('genreEdit').value;
+            const oldTitle = document.getElementById('titleOld').value.trim();
+            const title = document.getElementById('titleEdit').value.trim();
+            const author = document.getElementById('authorEdit').value.trim(); //extract the form values
+            const release = document.getElementById('releaseEdit').value.trim();
+            const genre = document.getElementById('genreEdit').value.trim();
             document.getElementById('editBookForm').reset(); //clears the form inputs
             for (let book of books) {
                 if ((title.toLowerCase() === book.title.toLowerCase()) && (oldTitle.toLowerCase() !== title.toLowerCase())) { //prevents the ability to edit a books title into an already existing title
-                    document.getElementById('feedback').innerHTML = "There already exists a book with this title";
+                    document.getElementById('feedback').textContent = "There already exists a book with this title";
                     setTimeout(() => {
-                        document.getElementById('feedback').innerHTML = "";
+                        document.getElementById('feedback').textContent = "";
                     }, 3000);
 
 
@@ -346,9 +346,9 @@
 
             }
             if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty it cancels edit
-                document.getElementById('feedback').innerHTML = "Space has been left empty";
+                document.getElementById('feedback').textContent = "Space has been left empty";
                 setTimeout(() => {
-                    document.getElementById('feedback').innerHTML = "";
+                    document.getElementById('feedback').textContent = "";
                 }, 3000);
 
                 return false;
