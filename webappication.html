@@ -291,7 +291,7 @@
         });
         //clears wrong input placeholder
         document.getElementById('removeInput').addEventListener('click', function (event) {
-            if (document.getElementById('removeInput').placeholder == 'BOOK NOT FOUND') {    //replaces the placeholder value which is present after book could not be found
+            if (document.getElementById('removeInput').placeholder.trim() === 'BOOK NOT FOUND') {    //replaces the placeholder value which is present after book could not be found
                 document.getElementById('removeInput').placeholder = 'Enter book title to remove';
             }
         });
@@ -303,9 +303,21 @@
             const author = document.getElementById('authorAdd').value;
             const release = document.getElementById('releaseAdd').value;  //retrieves data filled out in form
             const genre = document.getElementById('genreAdd').value;
+            document.getElementById('addBookForm').reset(); //clears form
+            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty
+                document.getElementById('feedback').innerHTML = "A Space has been left empty";
+                setTimeout(() => {
+                    document.getElementById('feedback').innerHTML = "";
+                }, 3000);
+
+                return false;
+            }
+
+
+
             userFeedbackAdd(addBook(title, author, release, genre));  //retrieved data gets passed to addBook function
 
-            document.getElementById('addBookForm').reset(); //clears form
+         
         })
 
         //Event listener for edit button
@@ -331,6 +343,15 @@
 
                     return false
                 }
+
+            }
+            if ((title.trim() === '') || (author.trim() === "") || (release.trim() === "") || (genre.trim() === "")) { //if one of the fields is empty
+                document.getElementById('feedback').innerHTML = "Space has been left empty";
+                setTimeout(() => {
+                    document.getElementById('feedback').innerHTML = "";
+                }, 3000);
+
+                return false;
             }
             userFeedbackEdit(editBook(oldTitle, title, author, release, genre)); //if it is not a duplicate title book is edited 
 
