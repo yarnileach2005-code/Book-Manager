@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Assortment Manager</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: rgb(201, 188, 173);
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        form {
+            border: 1px solid black;
+            background-color: rgb(226, 221, 205);
+
+        }
+
+        form:nth-of-type(3) {
+            padding: 1rem;
+        }
+
+        form li {
+            list-style: none;
+        }
+
+        table {
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        tr {
+            background-color: azure;
+        }
+
+        tr:nth-last-of-type(even) {
+            background-color: rgb(0, 0, 0);
+            color: white;
+        }
+
+        tr:nth-of-type(1) {
+            background-color: rgb(247, 0, 0);
+            color: rgb(0, 0, 0);
+        }
+
+        #feedback {
+            margin-top: 2rem;
+            background-color: azure;
+            color: rgb(132, 16, 199);
+            font-size: 2rem;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <header>
+        <h1>Book Assortment Manager</h1>
+    </header>
+    <main>
+
+        <form id="addBookForm">
+            <fieldset>
+                <legend>Add book to assortment.</legend>
+
+                <ul>
+                    <li>
+                        <label for="titleAdd">Title:</label>
+                        <input type="text" id="titleAdd" placeholder="Title" required>
+                    </li>
+                    <li>
+                        <label for="authorAdd">Author:</label>
+                        <input type="text" id="authorAdd" placeholder="Author" required>
+                    </li>
+                    <li>
+                        <label for="releaseAdd">Release Year:</label>
+                        <input type="number" min="0" max="2026" id="releaseAdd" placeholder="Year" required>
+                    </li>
+                    <li>
+                        <label for="genreAdd">Genre</label>
+                        <input type="text" id="genreAdd" placeholder="Genre" required>
+                    </li>
+                </ul>
+                <input type="submit" id="addButton" value="Add book">
+            </fieldset>
+        </form>
+        <form id="editBookForm">
+            <fieldset>
+                <legend>Edit already existing books.</legend>
+
+                <ul>
+                    <li>
+                        <label for="titleOld">Old Title:</label>
+                        <input type="text" id="titleOld" placeholder="Title to edit" required>
+                    </li>
+                    <li>
+                        <label for="titleEdit">Title:</label>
+                        <input type="text" id="titleEdit" placeholder="Title" required>
+                    </li>
+                    <li>
+                        <label for="authorEdit">Author:</label>
+                        <input type="text" id="authorEdit" placeholder="Author" required>
+                    </li>
+                    <li>
+                        <label for="releaseEdit">Release Year:</label>
+                        <input type="number" min="0" max="2026" id="releaseEdit" placeholder="Year" required>
+                    </li>
+                    <li>
+                        <label for="genreEdit">Genre</label>
+                        <input type="text" id="genreEdit" placeholder="Genre" required>
+                    </li>
+                </ul>
+                <input type="submit" id="editButton" value="Edit book">
+            </fieldset>
+        </form>
+        <form id="remove">
+            <input id="removeInput" type="text" placeholder="Enter book title to remove">
+            <button id="removeButton">Remove Book</button>
+        </form>
+
+        <table id="booksTable">
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Year</th>
+                <th>Genre</th>
+            </tr>
+        </table>
+        <div role="feedback" id="feedback">
+
+        </div>
+
+    </main>
+    <script type="module">
+        const response = await fetch('./book.json'); //due to fetch this has to be opened in local server otherwise json data cannot be fetched.
+        const initialBooks = await response.json();
+        /*         const initialBooks = [{"title":"The Woods", "author": "Pia Franziska Kraus", "year": 2025, "genre": "Non-Fiction"},
+                                        {"title":"Simply More", "author": "Cynthia Erivo", "year": 2025, "genre": "Autobiography"},
+                                        {"title": "The Ultimate Hidden Truth of the World", "author": "David Graeber","year": 2025, "genre": "Non-Fiction"  }]; */
+
+        function loadBooksFromStorage(initialBooks) {
+            const storedBooks = localStorage.getItem('booksData'); //retrieves books json data from local storage 'booksdata'
+            if (storedBooks) { //checks if such a local storage exists. It will not if one has not used manager before
+                return JSON.parse(storedBooks); //if such a local storage exists it returns it
+            }
+            return initialBooks;//fallback to original data if there is no local storage 
+        }
+
+        const books = loadBooksFromStorage(initialBooks); //binds default or local storage book data to 'books' 
+
+        function saveBooksToStorage() {
+            localStorage.setItem('booksData', JSON.stringify(books)); //saves current book array as json data in localstorage 'booksdata'.
+        }
+
+        fillTable(); // generate table when entering page
+        //fills table with array converted from Json file
+        function fillTable() {
+
+            const table = document.querySelector('#booksTable'); //identifies html table through ID
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+            for (let book of books) {                     //goes through all book objects and passes them to addBookToTable function
+                addBookToTable(book);
+            }
+        }
+        //adds book to table
+        function addBookToTable(book) {
+            const table = document.querySelector('#booksTable');
+            const row = table.insertRow();          //creates a new row for each new book
+            row.insertCell(0).textContent = book.title;
+            row.insertCell(1).textContent = book.author;  //fills out row with the different properties
+            row.insertCell(2).textContent = book.year;
+            row.insertCell(3).textContent = book.genre;
+        }
+
+        //remove books method
+        function removeBook(title) {
+
+            for (let i = 0; i < books.length; i++) { //goes through all the book elements  
+                if (title.toLowerCase() === books[i].title.toLowerCase()) {  //determines whether the passed title matches with one of the objects and uses toLowerCase in case user ignores capital letters
+                    books.splice(i, 1);        //deletes that object from array
+                    fillTable(); //refreshes the book table
+                    saveBooksToStorage();
+                    return true; //exits function
+                }
+            }
+            console.log('Book ' + title + ' not found');   //if no book with the passed title is found
+            document.getElementById('removeInput').placeholder = 'BOOK NOT FOUND';
+            return false;
+        }
+        //adds book to array, table and subsequently local storage
+        function addBook(title, author, year, genre) {
+            let book = { title: title, author: author, year: year, genre: genre };
+            for (let bookAr of books) { //checks if such a book already exists in the array by matching titles.
+                if (book.title.toLowerCase() === bookAr.title.toLowerCase()) {
+                    return false
+                }
+            }
+            books.push(book);//adds book to array
+            addBookToTable(book);//adds book to table
+            saveBooksToStorage();//saves new array to storage
+            return true;
+        }
+        function editBook(oldTitle, title, author, year, genre) {
+            let book = { title: title, author: author, year: year, genre: genre };
+            for (let bookAr of books) {
+                if (oldTitle.toLowerCase() === bookAr.title.toLowerCase()) { //finds position of book to be edited 
+                    bookAr.title = title;
+                    bookAr.author = author;
+                    bookAr.year = year;
+                    bookAr.genre = genre;
+                    fillTable(); //refreshes table
+                    saveBooksToStorage(); //saves edited book to local storage
+                    return true;
+                }
+
+
+            }
+            return false
+        }
+        //generates user feedback for remove function
+        function userFeedbackRemove(boolean) {
+            if (!boolean) {
+                document.getElementById('feedback').innerHTML = "This Book does not exist";
+            }
+            else document.getElementById('feedback').innerHTML = "Book was successfully removed";
+
+            setTimeout(() => { //makes it so that message will vanish after 3 seconds
+                document.getElementById('feedback').innerHTML = "";
+
+            }, 3000);
+        }
+        //generates user feedback for add function
+        function userFeedbackAdd(boolean) {
+            if (boolean) {
+                document.getElementById('feedback').innerHTML = "Book has been added.";
+            }
+            else document.getElementById('feedback').innerHTML = "This book already exists.";
+
+            setTimeout(() => {
+                document.getElementById('feedback').innerHTML = "";
+
+            }, 3000);
+        }
+        //generates user feedback for edit function
+        function userFeedbackEdit(boolean) {
+            if (boolean) {
+                document.getElementById('feedback').innerHTML = "Book has been succesfully edited";
+            }
+            else document.getElementById('feedback').innerHTML = "No book under this name found";
+
+            setTimeout(() => {
+                document.getElementById('feedback').innerHTML = "";
+
+            }, 3000);
+        }
+
+        // Event listener for remove button
+        document.getElementById('removeButton').addEventListener('click', function (event) {
+            event.preventDefault();
+            if (!confirm("Are you sure you want to remove this book?")) { //makes user confirm whether book should be deleted
+                return;
+            }
+
+            const titleToRemove = document.getElementById('removeInput').value; // saves the title that should be removed
+            if (titleToRemove.trim() !== '') { //if it isn't empty
+                document.getElementById('removeInput').value = ''; // Clears input
+                userFeedbackRemove(removeBook(titleToRemove)); //remove book object
+            }
+            else {
+                document.getElementById('feedback').innerHTML = "No title present!"; //if the remove book input is empty this feedback will be displayed
+
+                setTimeout(() => {
+                    document.getElementById('feedback').innerHTML = "";
+
+                }, 3000);
+            }
+        });
+        //clears wrong input placeholder
+        document.getElementById('removeInput').addEventListener('click', function (event) {
+            if (document.getElementById('removeInput').placeholder == 'BOOK NOT FOUND') {    //replaces the placeholder value which is present after book could not be found
+                document.getElementById('removeInput').placeholder = 'Enter book title to remove';
+            }
+        });
+
+        //Event listener for add button
+        document.getElementById('addBookForm').addEventListener('submit', function (event) { //listens for a successful submits which means empty fields can not be submitted
+            event.preventDefault(); //stops the page from unneeded reload
+            const title = document.getElementById('titleAdd').value;
+            const author = document.getElementById('authorAdd').value;
+            const release = document.getElementById('releaseAdd').value;  //retrieves data filled out in form
+            const genre = document.getElementById('genreAdd').value;
+            userFeedbackAdd(addBook(title, author, release, genre));  //retrieved data gets passed to addBook function
+
+            document.getElementById('addBookForm').reset(); //clears form
+        })
+
+        //Event listener for edit button
+        document.getElementById('editBookForm').addEventListener('submit', function (event) { //listens to all succesful submits which means empty fiels can not be submitted
+            event.preventDefault();
+            if (!confirm("Are you sure you want to edit this book?")) { //asks for confirmation before final edit
+                return; //
+            }
+
+            const oldTitle = document.getElementById('titleOld').value;
+            const title = document.getElementById('titleEdit').value;
+            const author = document.getElementById('authorEdit').value; //extract the form values
+            const release = document.getElementById('releaseEdit').value;
+            const genre = document.getElementById('genreEdit').value;
+            document.getElementById('editBookForm').reset(); //clears the form inputs
+            for (let book of books) {
+                if ((title.toLowerCase() === book.title.toLowerCase()) && (oldTitle.toLowerCase() !== title.toLowerCase())) { //prevents the ability to edit a books title into an already existing title
+                    document.getElementById('feedback').innerHTML = "There already exists a book with this title";
+                    setTimeout(() => {
+                        document.getElementById('feedback').innerHTML = "";
+                    }, 3000);
+
+
+                    return false
+                }
+            }
+            userFeedbackEdit(editBook(oldTitle, title, author, release, genre)); //if it is not a duplicate title book is edited 
+
+        })
+    </script>
+</body>
+
+</html>
