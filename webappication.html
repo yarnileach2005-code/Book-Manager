@@ -146,11 +146,28 @@
     <script type="module">
         const response = await fetch('./book.json'); //due to fetch this has to be opened in local server otherwise json data cannot be fetched.
         const initialBooks = await response.json();
-
-        /*const initialBooks = [{"title":"The Woods", "author": "Pia Franziska Kraus", "year": 2025, "genre": "Non-Fiction"},
-                                        {"title":"Simply More", "author": "Cynthia Erivo", "year": 2025, "genre": "Autobiography"},                                 //use in file Json if local server use not possible.
-                                        {"title": "The Ultimate Hidden Truth of the World", "author": "David Graeber","year": 2025, "genre": "Non-Fiction"  }]; */
-
+ 
+/*                const initialBooks = JSON.parse(`[              
+         {
+           "title": "The Woods",
+           "author": "Pia Franziska Kraus",
+           "year": 2025,
+           "genre": "Non-Fiction"
+         },
+         {                                                            
+           "title": "Simply More",
+           "author": "Cynthia Erivo",
+           "year": 2025,
+           "genre": "Autobiography"
+         },
+         {
+           "title": "The Ultimate Hidden Truth of the World",
+           "author": "David Graeber",
+           "year": 2025,
+           "genre": "Non-Fiction"
+         }
+       ]`);  */
+       //use above JSON if running on local server is not possible.
         function loadBooksFromStorage(initialBooks) {
             const storedBooks = localStorage.getItem('booksData'); //retrieves books json data from local storage 'booksdata'
             if (storedBooks) { //checks if such a local storage exists. It will not if one has not used manager before
@@ -279,7 +296,7 @@
             const titleToRemove = document.getElementById('removeInput').value; // saves the title that should be removed
             if (titleToRemove.trim() !== '') { //if it isn't empty
                 document.getElementById('removeInput').value = ''; // Clears input
-                userFeedbackRemove(removeBook(titleToRemove)); //remove book object
+                userFeedbackRemove(removeBook(titleToRemove.trim())); //remove book object
             }
             else {
                 document.getElementById('feedback').textContent = "No title present!"; //if the remove book input is empty this feedback will be displayed
